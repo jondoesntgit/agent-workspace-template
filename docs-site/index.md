@@ -22,7 +22,7 @@ Pick one of three variants when asked:
 :class: page
 :width: 520px
 
-A `paper` workspace: Pagella 12 pt body, sidenotes in the margin, Nimbus Sans
+A `paper` workspace: Pagella 10 pt body, sidenotes in the margin, Nimbus Sans
 captions that match the plot text, and the plot's settings in its caption.
 ```
 

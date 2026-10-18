@@ -40,8 +40,9 @@ notebooks/ | docs/ | paper/
 
 ## House style at a glance
 
-- Body: Pagella (Palatino) 12 pt with newpxmath; sidenotes 10 pt; captions and all
-  plot/diagram text: Nimbus Sans 10 pt.
+- Body: Pagella (Palatino) 10 pt (tufte-latex native) with newpxmath; captions and
+  all plot/diagram text: Nimbus Sans 10 pt.
+- Vector components: x = `tab:red`, y = `tab:green`, z = `tab:blue`, always.
 - Figures are drawn at the exact LaTeX column width (`standards/latex/layout.tex`
   is read by both LaTeX and Python) and included at natural size.
 - Tufte-style plots: no top/right spines, no grid, direct labels, muted palette.

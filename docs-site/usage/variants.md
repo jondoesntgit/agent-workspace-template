@@ -48,5 +48,5 @@ paper/.latexmkrc         finds standards/latex/, tolerates "no citations yet"
 :class: page
 :width: 520px
 
-A full-width figure (`figure*` + `teamplot.figure("full")`) spanning text and margin.
+A full-width figure (`figure*` + `teamplot.figure("full")`) spanning text and margin, with x/y/z colored by axis, and the bibliography appearing once something is cited.
 ```

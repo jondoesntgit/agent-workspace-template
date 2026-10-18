@@ -11,6 +11,7 @@ Workspace type: **{{ kind }}**.{% if jira_key %} Ticket: {{ jira_key }}.{% endif
 
 ## Rules (read before acting)
 - **Any plot:** read `standards/plotting.md` first; use `teamplot` (never hand-style matplotlib).
+- **x/y/z components:** always x = `tab:red`, y = `tab:green`, z = `tab:blue` (`teamplot.xyz_color`).
 - **Every setting needed to reproduce a plot goes in its caption or a nearby margin note/footnote.**
   Pass them as `settings=` to `teamplot.save()`.
 - **Any diagram:** Mermaid in `diagrams/<name>.mmd`, rendered with `python scripts/render_diagrams.py`

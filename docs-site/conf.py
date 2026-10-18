@@ -4,7 +4,7 @@ import datetime
 project = "agent-workspace-template"
 author = "Jonathan Wheeler"
 copyright = f"{datetime.date.today().year}, {author}"
-release = "1.0.0"
+release = "1.1.0"
 
 extensions = [
     "myst_parser",

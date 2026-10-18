@@ -15,9 +15,9 @@ First page of a `tufte-handout` workspace.
 
 | Element | Font | Size |
 |---|---|---|
-| Body | Pagella (Palatino clone, `newpxtext`) | 12 pt / 15.5 pt leading |
-| Math | `newpxmath` (matched to Pagella) | 12 pt |
-| Sidenotes, margin notes | Pagella | 10 pt |
+| Body | Pagella (Palatino clone, `newpxtext`) | 10 pt / 14 pt leading (tufte-latex native) |
+| Math | `newpxmath` (matched to Pagella) | 10 pt |
+| Sidenotes, margin notes | Pagella | 8 pt (tufte default) |
 | Captions | Nimbus Sans (`helvet`) | 10 pt |
 | Plot and diagram text | Nimbus Sans | 10 pt |
 | Code | Bera Mono, scaled 0.85 | |
@@ -28,20 +28,22 @@ Pagella Math, under LuaLaTeX/XeLaTeX. Nimbus Sans is a free, metric-compatible
 Helvetica that installs easily on Windows, and both fonts come from URW, so they
 sit well together.
 
-tufte-latex only supports a 10 pt body, so `teamtufte.sty` redefines the size
-commands for 12 pt and widens the text block to keep line lengths comfortable.
+The body uses tufte-latex's native 10 pt size and page geometry, so everything
+else in the class (margin notes, running heads, full-width figures) behaves as its
+authors designed. Captions are set in 10 pt Nimbus Sans so they match plot text.
 
 ## Layout
 
-Letter paper: 1 in left margin, 4.75 in text block, 0.25 in gap, 1.9 in margin column
-(defined in `standards/latex/layout.tex`, shared with `teamplot`).
+Letter paper, tufte-latex's native geometry: 1 in left margin, 26 pc (312 pt) text
+block, 2 pc gap, 12 pc (144 pt) margin column. Defined in
+`standards/latex/layout.tex`, shared with `teamplot`.
 
 ## Writing in the Tufte style
 
 ```latex
 Main argument goes here.\sidenote{Numbered aside, set in the margin.}
 \marginnote{Unnumbered remark in the margin.}
-Results agree with prior work~\cite{smith2024}.   % citations render in the margin
+Results agree with prior work.\cite{smith2024}   % a numbered sidenote, after punctuation
 ```
 
 | Need | Use | `teamplot.figure(...)` |
@@ -53,6 +55,7 @@ Results agree with prior work~\cite{smith2024}.   % citations render in the marg
 | Units | `\SI{30}{\minute}`, `\si{\degree\celsius}` | |
 | Cross-reference | `\cref{fig:bias}` → "Fig. 1" | |
 | Placeholder | `\todo{cite}` → red margin note | |
+| Bibliography | `\teambibliography{references}` (already in `main.tex`) | hidden until the first `\cite` |
 
 Always include figures with `\teamfig{name}` and put settings in the caption with
 `\figsettingsof{name}`:

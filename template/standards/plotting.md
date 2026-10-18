@@ -83,6 +83,11 @@ let a human update it. Don't regenerate an annotated figure unless the task need
   whenever there are ≤ 4 series.
 - Use the color cycle in order: near-black first, then muted accents. Avoid
   ad-hoc colors, 3-D effects, shadows, and decorative fills.
+- **x/y/z data always uses `tab:red` for x, `tab:green` for y, `tab:blue` for z**
+  (`teamplot.XYZ_COLORS`, or `teamplot.xyz_color("x")`). This applies to any vector
+  components: position, velocity, acceleration, angular rate, magnetic field, axes
+  of a coordinate frame. It overrides the color cycle so components read the same
+  in every figure.
 - Every axis has a label with units in brackets, `Time [s]` (`teamplot.label`).
 - Show uncertainty (error bars or light shaded bands) whenever it's known.
 - Filenames: lowercase snake_case describing the content (`bias_vs_temperature`).
@@ -90,8 +95,8 @@ let a human update it. Don't regenerate an annotated figure unless the task need
 ## Typography
 | Element | Font | Size |
 |---|---|---|
-| Body text (LaTeX) | Pagella (Palatino) + newpxmath | 12 pt |
-| Sidenotes, margin notes | Pagella | 10 pt |
+| Body text (LaTeX) | Pagella (Palatino) + newpxmath | 10 pt (tufte-latex native) |
+| Sidenotes, margin notes | Pagella | 8 pt (tufte default) |
 | Captions | Nimbus Sans | 10 pt |
 | All text inside plots, incl. math | Nimbus Sans | 10 pt |
 

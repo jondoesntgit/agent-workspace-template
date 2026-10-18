@@ -1,11 +1,12 @@
 % Page layout: SINGLE SOURCE OF TRUTH for column widths.
 % Read by teamtufte.sty (LaTeX) AND by standards/teamplot (Python figure sizes),
 % so a figure made with teamplot.figure("column") is exactly \textwidth wide.
-% Keep the format `\def\teamNAME{<number>in}`. teamplot parses these lines.
+% Keep the format `\def\teamNAME{<number><unit>}` with unit in, pt, pc, bp, cm or mm;
+% teamplot parses these lines (TeX units: 1 in = 72.27 pt, 1 pc = 12 pt).
 %
-% Letter paper (8.5in): left + text + sep + margin + right = 8.5in
-\def\teamleftmargin{1.0in}
-\def\teamtextwidth{4.75in}
-\def\teammarginsep{0.25in}
-\def\teammarginwidth{1.9in}
-% full width = text + sep + margin = 6.9in
+% tufte-latex's native letter-paper geometry for its 10pt body.
+\def\teamleftmargin{1in}
+\def\teamtextwidth{26pc}
+\def\teammarginsep{2pc}
+\def\teammarginwidth{12pc}
+% full width = text + sep + margin = 40pc (6.64 in)

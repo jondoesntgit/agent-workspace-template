@@ -14,21 +14,9 @@
 \RequirePackage[scaled=0.85]{beramono}
 \RequirePackage{microtype}
 
-% ---- Sizes: 12pt body ---------------------------------------------------------
-% tufte-latex only supports 10pt, so redefine the size commands directly.
-\renewcommand\normalsize{\@setfontsize\normalsize{12}{15.5}%
-  \abovedisplayskip 12pt plus 3pt minus 7pt \belowdisplayskip\abovedisplayskip
-  \abovedisplayshortskip 0pt plus 3pt \belowdisplayshortskip 6.5pt plus 3.5pt minus 3pt}
-\renewcommand\small{\@setfontsize\small{11}{14}}
-\renewcommand\footnotesize{\@setfontsize\footnotesize{10}{12.5}}
-\renewcommand\scriptsize{\@setfontsize\scriptsize{8}{9.5}}
-\renewcommand\tiny{\@setfontsize\tiny{6}{7}}
-\renewcommand\large{\@setfontsize\large{14}{18}}
-\renewcommand\Large{\@setfontsize\Large{17}{22}}
-\renewcommand\LARGE{\@setfontsize\LARGE{20}{25}}
-\renewcommand\huge{\@setfontsize\huge{24}{30}}
-\renewcommand\Huge{\@setfontsize\Huge{30}{36}}
-\normalsize
+% ---- Sizes ------------------------------------------------------------------
+% Body: tufte-latex's native 10pt (10/14). Sidenotes and margin notes keep tufte's
+% defaults (\footnotesize serif).
 
 % ---- Layout (shared with teamplot via layout.tex) ------------------------------
 \input{layout.tex}
@@ -38,9 +26,7 @@
   top=1in}
 
 % ---- Notes and captions ---------------------------------------------------------
-% Sidenotes/margin notes: 10pt serif. Captions: 10pt Nimbus Sans, like the plots.
-\setsidenotefont{\fontsize{10}{12.5}\selectfont\rmfamily}
-\setmarginnotefont{\fontsize{10}{12.5}\selectfont\rmfamily}
+% Captions: 10pt Nimbus Sans, matching the text inside plots and diagrams.
 \setcaptionfont{\fontsize{10}{12.5}\selectfont\sffamily}
 
 % ---- Utilities ----------------------------------------------------------------
@@ -64,6 +50,15 @@
   \IfFileExists{../figures/#1.settings.tex}%
     {\input{../figures/#1.settings.tex}}%
     {\textcolor{red!70!black}{\textsf{[missing figures/#1.settings.tex]}}}}
+
+% ---- Bibliography that stays hidden until something is cited ---------------------
+% \teambibliography{references}: prints the bibliography (heading included) only
+% once the document has at least one \cite; otherwise just registers the .bib for
+% BibTeX, so fresh documents don't show an empty "References" section.
+\def\citation#1{\gdef\team@hascites{}}
+\newcommand{\teambibliography}[1]{%
+  \ifdefined\team@hascites \bibliography{#1}%
+  \else \if@filesw\immediate\write\@auxout{\string\bibdata{#1}}\fi \fi}
 
 % ---- \teamfig: generated figure, or a human-annotated override -------------------
 % \teamfig[includegraphics keys]{name}

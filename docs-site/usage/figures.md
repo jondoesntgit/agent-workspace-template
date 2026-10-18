@@ -62,19 +62,20 @@ treat that warning as an error. In LaTeX, the caption pulls the settings in auto
 `standards/latex/layout.tex` defines the page geometry once:
 
 ```latex
-\def\teamleftmargin{1.0in}
-\def\teamtextwidth{4.75in}
-\def\teammarginsep{0.25in}
-\def\teammarginwidth{1.9in}
+\def\teamleftmargin{1in}
+\def\teamtextwidth{26pc}     % 312 pt, tufte-latex native
+\def\teammarginsep{2pc}
+\def\teammarginwidth{12pc}
 ```
 
-LaTeX uses it to set up the page; `teamplot` parses the same file, so:
+LaTeX uses it to set up the page; `teamplot` parses the same file (converting TeX
+units: 1 in = 72.27 pt, 1 pc = 12 pt), so:
 
 | `teamplot.figure(…)` | Width | LaTeX environment |
 |---|---|---|
-| `"column"` | 4.75 in (= `\textwidth`) | `figure` |
-| `"margin"` | 1.9 in (= `\marginparwidth`) | `marginfigure` |
-| `"full"` | 6.9 in (text + gap + margin) | `figure*` |
+| `"column"` | 26 pc = 312 pt ≈ 4.32 in (= `\textwidth`) | `figure` |
+| `"margin"` | 12 pc = 144 pt ≈ 1.99 in (= `\marginparwidth`) | `marginfigure` |
+| `"full"` | 40 pc = 480 pt ≈ 6.64 in (text + gap + margin) | `figure*` |
 
 Figures are included at **natural size**, so 10 pt text in the plot is 10 pt on the
 page, matching the 10 pt Nimbus Sans captions. Saving uses `bbox="standard"` with
@@ -93,11 +94,40 @@ which `figure()` calls). Highlights:
 - Top and right spines off; left/bottom spines offset 4 pt outward; no grid.
 - Short outward ticks; frame, ticks, and labels in dark gray, not black.
 - Color cycle: near-black, then muted red, blue, green, brown, purple, gray. Use in order.
+- **Exception: x/y/z vector components** always use `tab:red` / `tab:green` / `tab:blue`
+  (see below).
 - No legend frame; prefer `direct_labels()`.
 - PDF/PS fonts embedded as Type 42 (searchable and editable); SVG text kept as text.
 
 To change the style for everyone, edit the matplotlibrc in the template and release;
 see {doc}`../maintenance`.
+
+## x/y/z components
+
+Any time a plot shows components of a vector (position, velocity, acceleration,
+angular rate, magnetic field, frame axes), color them by axis, not by the cycle:
+
+```python
+for i, axis in enumerate("xyz"):
+    ax.plot(t, gyro[:, i], color=teamplot.xyz_color(axis), label=axis)
+teamplot.direct_labels(ax)
+```
+
+| Component | Color |
+|---|---|
+| x | `tab:red` |
+| y | `tab:green` |
+| z | `tab:blue` |
+
+```{figure} ../_static/img/angular_rate_xyz.png
+:width: 600px
+
+Per-axis angular rate: x red, y green, z blue, labeled directly.
+```
+
+This matches the RGB = XYZ convention of CAD tools and 3-D viewers, and means a
+reader never has to check a legend to know which trace is z. The mapping lives in
+`teamplot.XYZ_COLORS`.
 
 ## Helper reference
 
@@ -118,6 +148,9 @@ see {doc}`../maintenance`.
 
 `save(fig, name, settings=None, outdir="figures", formats=("pdf","png","svg"))`
 : Save all formats and the settings files.
+
+`xyz_color(axis)`, `XYZ_COLORS`
+: `"tab:red"`, `"tab:green"`, `"tab:blue"` for `"x"`, `"y"`, `"z"`.
 
 `settings_text(settings)`
 : `"Key: value; …"` for notebook/Markdown captions.

@@ -58,6 +58,9 @@ Install the missing packages: MiKTeX does it on demand; on TeX Live use
 Working as intended; see {doc}`usage/annotations`. Update the annotated SVG and
 re-export, or raise `\teamfigtolerance`.
 
+**There's no References section.**
+`\teambibliography` hides it until the document cites something. Add a `\cite{}`.
+
 **`latexmk` fails on a document with no citations.**
 Make sure the workspace's `paper/.latexmkrc` is present; it tolerates BibTeX's
 "no \citation commands" error.

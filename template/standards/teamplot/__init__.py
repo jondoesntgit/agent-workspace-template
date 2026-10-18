@@ -27,12 +27,26 @@ _LAYOUT = _HERE.parent / "latex" / "layout.tex"
 
 GOLDEN = 0.618  # default height / width
 
+# Vector components always use these colors, in every plot, so x/y/z read the
+# same everywhere (the RGB = XYZ convention used by CAD tools and 3-D viewers).
+XYZ_COLORS = {"x": "tab:red", "y": "tab:green", "z": "tab:blue"}
+
+
+def xyz_color(axis: str) -> str:
+    """Color for a vector component: xyz_color("x") -> "tab:red". Case-insensitive."""
+    return XYZ_COLORS[axis.strip().lower()]
+
 
 # ---- Layout ---------------------------------------------------------------------
 
+_TEX_UNITS_IN = {"in": 1.0, "pt": 1 / 72.27, "pc": 12 / 72.27, "bp": 1 / 72.0,
+                 "cm": 1 / 2.54, "mm": 1 / 25.4}
+
+
 def _read_layout(path: Path = _LAYOUT) -> dict[str, float]:
-    """Parse `\\def\\teamNAME{<x>in}` lines from layout.tex into inches."""
-    vals = {m[1]: float(m[2]) for m in re.finditer(r"\\def\\team(\w+)\{([\d.]+)in\}", path.read_text())}
+    """Parse `\\def\\teamNAME{<number><unit>}` lines from layout.tex into inches."""
+    vals = {m[1]: float(m[2]) * _TEX_UNITS_IN[m[3]] for m in re.finditer(
+        r"\\def\\team(\w+)\{([\d.]+)(in|pt|pc|bp|cm|mm)\}", path.read_text())}
     return {
         "column": vals["textwidth"],
         "margin": vals["marginwidth"],

@@ -46,8 +46,8 @@ probably belongs in a `standards/*.md` file that `AGENTS.md` points to.
 
 ### Changing the page layout
 
-`layout.tex` must keep the format `\def\teamNAME{<number>in}` because `teamplot`
-parses it with a regex. Existing figures won't resize themselves: projects must
+`layout.tex` must keep the format `\def\teamNAME{<number><unit>}` (unit `in`, `pt`,
+`pc`, `bp`, `cm`, or `mm`) because `teamplot` parses it with a regex. Existing figures won't resize themselves: projects must
 regenerate figures after updating, so treat a layout change as a **minor** release and say
 so in the changelog.
 

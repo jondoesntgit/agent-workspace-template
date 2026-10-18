@@ -13,6 +13,20 @@ Each release is a git tag (`v1.0.0`), which is what `copier update` pulls.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-18
+### Changed
+- Body text is now tufte-latex's native 10 pt (was a 12 pt override), and the page
+  layout is back to tufte's native geometry: 26 pc text, 2 pc gap, 12 pc margin.
+  `layout.tex` now accepts TeX units (in, pt, pc, bp, cm, mm) so widths match exactly.
+  Figure widths follow automatically; **regenerate existing figures** after updating.
+- Sidenotes and margin notes use tufte's default size again. Captions stay 10 pt Nimbus Sans.
+
+### Added
+- x/y/z color rule: x = `tab:red`, y = `tab:green`, z = `tab:blue` for any vector
+  components (`teamplot.XYZ_COLORS`, `teamplot.xyz_color()`), in the plotting
+  standard and `AGENTS.md`.
+- `\teambibliography{}`: the References section stays hidden until the first `\cite`.
+
 ## [1.0.0] - 2026-10-18
 ### Added
 - Copier template with three variants: `investigation` (Jupyter), `docs` (Markdown
@@ -33,5 +47,6 @@ Each release is a git tag (`v1.0.0`), which is what `copier update` pulls.
   time and in `scripts/check_figures.py`.
 - Sphinx documentation site published to GitHub Pages.
 
-[Unreleased]: https://github.com/jondoesntgit/agent-workspace-template/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/jondoesntgit/agent-workspace-template/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/jondoesntgit/agent-workspace-template/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/jondoesntgit/agent-workspace-template/releases/tag/v1.0.0
