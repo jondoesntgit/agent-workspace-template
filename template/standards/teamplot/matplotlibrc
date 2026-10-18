@@ -1,0 +1,81 @@
+## Team matplotlibrc: Tufte-style, minimal ink. Loaded by teamplot.use().
+## Figure SIZE is not set here; teamplot.figure() takes it from
+## standards/latex/layout.tex so figures match the LaTeX column exactly.
+
+## ---- Fonts: 10 pt Nimbus Sans everywhere (matches LaTeX captions) ----------
+font.family:      sans-serif
+font.sans-serif:  Nimbus Sans, Nimbus Sans L, TeX Gyre Heros, Helvetica, Arial, DejaVu Sans
+font.size:        10
+axes.labelsize:   10
+axes.titlesize:   10
+xtick.labelsize:  10
+ytick.labelsize:  10
+legend.fontsize:  10
+figure.titlesize: 10
+mathtext.fontset: custom
+mathtext.rm:      Nimbus Sans
+mathtext.it:      Nimbus Sans:italic
+mathtext.bf:      Nimbus Sans:bold
+mathtext.sf:      Nimbus Sans
+mathtext.cal:     Nimbus Sans:italic
+
+## ---- Axes: no top/right spines, no grid, quiet gray frame ------------------
+axes.spines.top:    False
+axes.spines.right:  False
+axes.linewidth:     0.6
+axes.edgecolor:     333333
+axes.labelcolor:    222222
+axes.grid:          False
+axes.titlelocation: left
+axes.titleweight:   normal
+axes.xmargin:       0.02
+axes.ymargin:       0.04
+axes.facecolor:     none
+## Muted palette: near-black first, then restrained accents. Order matters;
+## use series in order and label them directly rather than with legends.
+axes.prop_cycle:    cycler('color', ['222222', 'B2182B', '2166AC', '4D9221', '8C510A', '762A83', '7F7F7F'])
+
+## ---- Ticks: outward, short, thin, same gray as the frame ---------------------
+xtick.direction:    out
+ytick.direction:    out
+xtick.major.size:   3
+ytick.major.size:   3
+xtick.minor.size:   1.5
+ytick.minor.size:   1.5
+xtick.major.width:  0.6
+ytick.major.width:  0.6
+xtick.minor.width:  0.5
+ytick.minor.width:  0.5
+xtick.color:        333333
+ytick.color:        333333
+xtick.major.pad:    2
+ytick.major.pad:    2
+
+## ---- Data ink ----------------------------------------------------------------
+lines.linewidth:    1.25
+lines.markersize:   3.5
+lines.markeredgewidth: 0
+scatter.edgecolors: none
+errorbar.capsize:   0
+patch.linewidth:    0
+hist.bins:          auto
+
+## ---- Legend (prefer teamplot.direct_labels) ---------------------------------
+legend.frameon:     False
+legend.handlelength: 1.5
+legend.borderaxespad: 0.2
+
+## ---- Layout and output -------------------------------------------------------
+## bbox 'standard' (not 'tight') keeps the saved width == the requested column width.
+figure.constrained_layout.use: True
+figure.constrained_layout.h_pad: 0.02
+figure.constrained_layout.w_pad: 0.02
+figure.facecolor:   white
+figure.dpi:         150
+savefig.dpi:        300
+savefig.bbox:       standard
+savefig.facecolor:  white
+## Embed real (Type 42) fonts so PDFs stay searchable/editable.
+pdf.fonttype:       42
+ps.fonttype:        42
+svg.fonttype:       none

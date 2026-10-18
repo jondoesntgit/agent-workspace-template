@@ -1,0 +1,45 @@
+{
+  "theme": "base",
+  "themeVariables": {
+    "fontFamily": "Nimbus Sans, Nimbus Sans L, TeX Gyre Heros, Helvetica, Arial, sans-serif",
+    "fontSize": "13.33px",
+    "background": "#ffffff",
+    "primaryColor": "#ffffff",
+    "primaryBorderColor": "#333333",
+    "primaryTextColor": "#222222",
+    "secondaryColor": "#f2f2f2",
+    "secondaryBorderColor": "#7f7f7f",
+    "tertiaryColor": "#ffffff",
+    "tertiaryBorderColor": "#bfbfbf",
+    "lineColor": "#333333",
+    "textColor": "#222222",
+    "clusterBkg": "#f7f7f7",
+    "clusterBorder": "#bfbfbf",
+    "edgeLabelBackground": "#ffffff",
+    "noteBkgColor": "#ffffff",
+    "noteBorderColor": "#bfbfbf",
+    "actorBkg": "#ffffff",
+    "actorBorder": "#333333",
+    "signalColor": "#333333"
+  },
+  "htmlLabels": false,
+  "flowchart": {
+    "htmlLabels": false,
+    "curve": "linear",
+    "nodeSpacing": 20,
+    "rankSpacing": 28,
+    "padding": 6,
+    "wrappingWidth": 110,
+    "diagramPadding": 4
+  },
+  "class": {
+    "htmlLabels": false
+  },
+  "state": {
+    "htmlLabels": false
+  },
+  "sequence": {
+    "mirrorActors": false
+  },
+  "markdownAutoWrap": false
+}

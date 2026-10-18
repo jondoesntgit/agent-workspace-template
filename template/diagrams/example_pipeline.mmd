@@ -1,0 +1,7 @@
+%% Example: delete or replace. Render with: python scripts/render_diagrams.py
+flowchart TB
+  raw[Raw IMU data] --> cal[Calibration]
+  cal --> kf[Kalman filter]
+  ref[Reference track] --> err
+  kf --> err[Error analysis]
+  class kf accent

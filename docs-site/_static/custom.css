@@ -1,0 +1,4 @@
+/* Let example page images breathe and stay legible. */
+.figure-page img, img.page { border: 1px solid var(--color-background-border); box-shadow: none; }
+figure img { max-width: 100%; }
+.mermaid { text-align: center; }

@@ -1,0 +1,67 @@
+# Copier template for AI-agent task workspaces.
+# Usage:  copier copy --trust gh:jondoesntgit/agent-workspace-template my-task
+# Update: cd my-task && copier update --trust
+
+_subdirectory: template
+_min_copier_version: "9.5"
+_answers_file: .copier-answers.yml
+
+# Project-owned once created: `copier update` never touches these.
+_skip_if_exists:
+  - TASK.md
+  - CHANGELOG.md
+
+# ---- Questions ---------------------------------------------------------------
+
+kind:
+  type: str
+  help: What kind of task is this?
+  choices:
+    "Investigation - Jupyter notebook with a handful of plots": investigation
+    "Documentation - pull Confluence context, write a few sections": docs
+    "Paper - Tufte-style LaTeX writeup (handout or book)": paper
+
+project_name:
+  type: str
+  help: Short project name (used in titles)
+  default: "{{ _copier_conf.dst_path | basename }}"
+
+author:
+  type: str
+  help: Author name for the writeup
+  default: ""
+
+jira_key:
+  type: str
+  help: JIRA ticket key (e.g. ABC-123). Leave blank to fill TASK.md by hand.
+  default: ""
+
+confluence_pages:
+  type: str
+  help: Comma-separated Confluence page IDs to pull into context/ (blank for none)
+  default: ""
+  when: "{{ kind != 'investigation' }}"
+
+paper_style:
+  type: str
+  help: LaTeX layout
+  choices:
+    "Short paper (tufte-handout)": article
+    "Dissertation / long report with chapters (tufte-book)": report
+  default: article
+  when: "{{ kind == 'paper' }}"
+
+# ---- Post-generation (first creation only, never on `copier update`) ----------
+_tasks:
+  # Date-stamp the first CHANGELOG.md entry.
+  - command: >-
+      "{{ _copier_python }}" -c "import datetime, pathlib;
+      p = pathlib.Path('CHANGELOG.md');
+      p.write_text(p.read_text().replace('@CREATED@', str(datetime.date.today())))"
+    when: "{{ _copier_operation == 'copy' }}"
+  # Snapshot JIRA/Confluence. Needs ATLASSIAN_* env vars (see the script).
+  - command: >-
+      "{{ _copier_python }}" scripts/fetch_context.py
+      --jira "{{ jira_key }}"
+      --confluence "{{ confluence_pages }}"
+    when: "{{ _copier_operation == 'copy' and (jira_key or confluence_pages) }}"

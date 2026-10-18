@@ -1,0 +1,58 @@
+{% if paper_style == 'report' -%}
+\documentclass[nofonts]{tufte-book}
+{%- else -%}
+\documentclass[nofonts]{tufte-handout}
+{%- endif %}
+% Team typography + layout: standards/latex/teamtufte.sty (found via .latexmkrc)
+\usepackage{teamtufte}
+
+\title{ {{- project_name -}} }
+\author{ {{- author -}} }
+\date{\today}
+
+\begin{document}
+{% if paper_style == 'report' %}
+\frontmatter
+\maketitle
+\tableofcontents
+
+\chapter*{Abstract}
+\input{sections/abstract}
+
+\mainmatter
+\chapter{Introduction}
+\input{sections/introduction}
+
+\chapter{Methods}
+\input{sections/methods}
+
+\chapter{Results}
+\input{sections/results}
+
+\chapter{Conclusion}
+\input{sections/conclusion}
+
+\backmatter
+{% else %}
+\maketitle
+
+\begin{abstract}
+\input{sections/abstract}
+\end{abstract}
+
+\section{Introduction}
+\input{sections/introduction}
+
+\section{Methods}
+\input{sections/methods}
+
+\section{Results}
+\input{sections/results}
+
+\section{Conclusion}
+\input{sections/conclusion}
+{% endif %}
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

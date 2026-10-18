@@ -1,0 +1,9 @@
+/* Team Mermaid overrides: thin strokes, quiet accents (Tufte: minimal non-data ink). */
+.node rect, .node polygon, .node circle, .node ellipse, .node path { stroke-width: 0.75px; }
+.edgePath path, .flowchart-link { stroke-width: 0.75px; }
+.cluster rect { stroke-width: 0.5px; stroke-dasharray: 3 2; }
+/* Emphasis for the one thing the reader should notice: `class X accent` in the .mmd */
+.accent rect, .accent polygon, .accent circle { stroke: #B2182B !important; stroke-width: 1.25px !important; }
+.accent text, .accent tspan { fill: #B2182B !important; }
+/* No drop shadows or chart junk. */
+.node rect, .node polygon, .node circle, .node ellipse, .node path, .cluster rect { filter: none !important; }

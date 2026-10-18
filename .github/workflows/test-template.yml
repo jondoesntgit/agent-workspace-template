@@ -1,0 +1,66 @@
+name: test-template
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  render-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends \
+            fonts-urw-base35 latexmk texlive-latex-extra texlive-fonts-extra \
+            texlive-science texlive-plain-generic
+          pip install copier numpy matplotlib
+          python -c "import matplotlib, shutil; shutil.rmtree(matplotlib.get_cachedir(), ignore_errors=True)"
+      - name: Render all variants
+        run: |
+          git config --global user.email ci@example.com && git config --global user.name ci
+          for v in investigation docs "paper --data paper_style=article" "paper --data paper_style=report"; do
+            n=$(echo "$v" | tr -c 'a-z\n' '_' | cut -c1-30)
+            copier copy --trust --defaults --vcs-ref HEAD --data kind=$v . "/tmp/ws/$n"
+          done
+          ls /tmp/ws
+      - name: Plot helpers produce column-width figures with settings
+        working-directory: /tmp/ws/investigation
+        run: |
+          python -W error::UserWarning - <<'PY'
+          import sys; sys.path.insert(0, "standards")
+          import numpy as np, teamplot
+          from PIL import Image
+          for w in ("column", "margin", "full"):
+              fig, ax = teamplot.figure(w)
+              ax.plot([0, 1], [0, 1], label="a"); ax.plot([0, 1], [0, 1.02], label="b")
+              teamplot.label(ax, x="t", x_unit="s", y="x", y_unit="m"); teamplot.direct_labels(ax)
+              teamplot.save(fig, f"t_{w}", settings={"N": 2})
+              px = Image.open(f"figures/t_{w}.png").size[0]
+              assert abs(px / 300 - teamplot.WIDTHS[w]) < 0.01, (w, px)
+          print("widths ok", teamplot.WIDTHS)
+          PY
+      - name: Notebook template executes
+        working-directory: /tmp/ws/investigation/notebooks
+        run: |
+          python -c "import json; nb=json.load(open('01_analysis.ipynb')); exec('\n'.join(''.join(c['source']) for c in nb['cells'] if c['cell_type']=='code'))"
+      - name: Build both paper styles
+        run: |
+          for d in /tmp/ws/paper_*; do (cd "$d/paper" && latexmk -interaction=nonstopmode main.tex); done
+      - name: Stale-annotation check fires
+        working-directory: /tmp/ws/investigation
+        run: |
+          mkdir -p figures/annotated
+          cp figures/t_column.svg figures/t_column.pdf figures/annotated/
+          touch -d "3 hours ago" figures/annotated/t_column.*
+          if python scripts/check_figures.py; then echo "expected a stale warning"; exit 1; fi
+          touch figures/annotated/t_column.*
+          python scripts/check_figures.py

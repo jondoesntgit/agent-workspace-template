@@ -1,0 +1,125 @@
+% teamtufte.sty: team typography on top of tufte-handout / tufte-book.
+% Load with: \documentclass[nofonts]{tufte-handout}  \usepackage{teamtufte}
+% Managed by the agent-workspace-template; change it there, not in a project.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{teamtufte}[2026/10/18 Team Tufte style]
+
+% ---- Fonts (pdfLaTeX) --------------------------------------------------------
+% Body: Pagella (Palatino) with matching math. Sans: Nimbus Sans (helvet = URW
+% Nimbus Sans), unscaled so 10pt captions match 10pt plot text exactly.
+\RequirePackage[T1]{fontenc}
+\RequirePackage{newpxtext}
+\RequirePackage{newpxmath}
+\RequirePackage{helvet}            % \sffamily = Nimbus Sans
+\RequirePackage[scaled=0.85]{beramono}
+\RequirePackage{microtype}
+
+% ---- Sizes: 12pt body ---------------------------------------------------------
+% tufte-latex only supports 10pt, so redefine the size commands directly.
+\renewcommand\normalsize{\@setfontsize\normalsize{12}{15.5}%
+  \abovedisplayskip 12pt plus 3pt minus 7pt \belowdisplayskip\abovedisplayskip
+  \abovedisplayshortskip 0pt plus 3pt \belowdisplayshortskip 6.5pt plus 3.5pt minus 3pt}
+\renewcommand\small{\@setfontsize\small{11}{14}}
+\renewcommand\footnotesize{\@setfontsize\footnotesize{10}{12.5}}
+\renewcommand\scriptsize{\@setfontsize\scriptsize{8}{9.5}}
+\renewcommand\tiny{\@setfontsize\tiny{6}{7}}
+\renewcommand\large{\@setfontsize\large{14}{18}}
+\renewcommand\Large{\@setfontsize\Large{17}{22}}
+\renewcommand\LARGE{\@setfontsize\LARGE{20}{25}}
+\renewcommand\huge{\@setfontsize\huge{24}{30}}
+\renewcommand\Huge{\@setfontsize\Huge{30}{36}}
+\normalsize
+
+% ---- Layout (shared with teamplot via layout.tex) ------------------------------
+\input{layout.tex}
+\geometry{letterpaper,
+  left=\teamleftmargin, textwidth=\teamtextwidth,
+  marginparsep=\teammarginsep, marginparwidth=\teammarginwidth,
+  top=1in}
+
+% ---- Notes and captions ---------------------------------------------------------
+% Sidenotes/margin notes: 10pt serif. Captions: 10pt Nimbus Sans, like the plots.
+\setsidenotefont{\fontsize{10}{12.5}\selectfont\rmfamily}
+\setmarginnotefont{\fontsize{10}{12.5}\selectfont\rmfamily}
+\setcaptionfont{\fontsize{10}{12.5}\selectfont\sffamily}
+
+% ---- Utilities ----------------------------------------------------------------
+\RequirePackage{amsmath}
+\RequirePackage{booktabs}
+\RequirePackage{siunitx}
+\RequirePackage{xcolor}
+\RequirePackage{graphicx}
+\RequirePackage[capitalise]{cleveref}   % tufte already loads hyperref
+\graphicspath{{../figures/}}
+
+% Margin TODO marker (todonotes fights tufte's margins).
+\newcommand{\todo}[1]{\marginnote{\textcolor{red!70!black}{\textsf{TODO:} #1}}}
+
+% Plot settings in captions (the reproducibility rule).
+% Usage inside a caption:  \caption{What to notice. \figsettingsof{bias_vs_temperature}}
+% teamplot.save(fig, name, settings=...) writes figures/<name>.settings.tex,
+% which contains a \figsettings{...} call. Robust, so it is safe in \caption.
+\newcommand{\figsettings}[1]{\textcolor{black!60}{\textsf{Settings:} #1}}
+\DeclareRobustCommand{\figsettingsof}[1]{%
+  \IfFileExists{../figures/#1.settings.tex}%
+    {\input{../figures/#1.settings.tex}}%
+    {\textcolor{red!70!black}{\textsf{[missing figures/#1.settings.tex]}}}}
+
+% ---- \teamfig: generated figure, or a human-annotated override -------------------
+% \teamfig[includegraphics keys]{name}
+%   Uses figures/annotated/<name>.pdf if it exists (a human's Inkscape edit of
+%   <name>.svg), otherwise the generated figures/<name>.pdf. Natural size, but never
+%   wider than the current column (so figures made at column width are unscaled).
+%   Warns (log + red note under the figure) when the annotation may be stale:
+%     - generated figures/<name>.png is newer than annotated/<name>.svg by more than
+%       \teamfigtolerance minutes (the data/diagram changed after the human annotated), or
+%     - annotated/<name>.svg is newer than annotated/<name>.pdf (edited but not exported).
+\RequirePackage{pdftexcmds}
+\RequirePackage[export]{adjustbox}
+\newcommand{\teamfigdir}{../figures}
+\newcommand{\teamfigtolerance}{60}   % minutes; \renewcommand to change
+\newif\ifteamfigmarks \teamfigmarkstrue  % \teamfigmarksfalse hides the red notes in the PDF
+
+% \team@minutes{file}{\macro}: file mtime as approximate minutes (monotonic, local time).
+\def\team@minutes#1#2{%
+  \edef\team@stamp{\pdf@filemoddate{#1}}%
+  \ifx\team@stamp\@empty \def#2{-1}\else
+    \edef\team@stamp{\expandafter\@gobbletwo\team@stamp}% drop "D:"
+    \expandafter\team@parseA\team@stamp\relax
+    \edef#2{\the\numexpr ((\team@Y*372 + \team@M*31 + \team@D)*1440 + \team@H*60 + \team@m)\relax}%
+  \fi}
+\def\team@parseA#1#2#3#4#5#6#7#8#9{%
+  \def\team@Y{#1#2#3#4}\def\team@M{#5#6}\def\team@D{#7#8}\team@parseB#9}
+\def\team@parseB#1#2#3#4#5\relax{\def\team@H{#1#2}\def\team@m{#3#4}}
+
+\def\team@stalenote#1{%
+  \PackageWarningNoLine{teamtufte}{Figure '\team@name': #1}%
+  \ifteamfigmarks\par\nopagebreak
+    {\fontsize{8}{10}\selectfont\sffamily\color{red!70!black}\raggedright
+     \mbox{}\hspace{0pt}Annotation may be stale: #1\par}\fi}
+
+\newcommand{\teamfig}[2][]{%
+  \edef\team@name{#2}%
+  \IfFileExists{\teamfigdir/annotated/#2.pdf}{%
+    \adjustbox{max width=\linewidth}{\includegraphics[#1]{\teamfigdir/annotated/#2.pdf}}%
+    \team@minutes{\teamfigdir/#2.png}\team@gen
+    \team@minutes{\teamfigdir/annotated/#2.svg}\team@svg
+    \team@minutes{\teamfigdir/annotated/#2.pdf}\team@pdf
+    \ifnum\team@gen>-1 \ifnum\team@svg>-1
+      \ifnum\numexpr\team@gen-\team@svg\relax>\teamfigtolerance\relax
+        \team@stalenote{generated \detokenize{#2}.png is newer than annotated/\detokenize{#2}.svg.
+          Re-check the annotations against the new figure, then re-save the SVG.}%
+      \fi\fi\fi
+    \ifnum\team@svg>-1
+      \ifnum\numexpr\team@svg-\team@pdf\relax>1
+        \team@stalenote{annotated/\detokenize{#2}.svg was edited after annotated/\detokenize{#2}.pdf was exported.
+          Re-export the PDF from Inkscape.}%
+      \fi\fi
+  }{%
+    \IfFileExists{\teamfigdir/#2.pdf}%
+      {\adjustbox{max width=\linewidth}{\includegraphics[#1]{\teamfigdir/#2.pdf}}}%
+      {\PackageWarningNoLine{teamtufte}{Figure '#2' not found in \teamfigdir}%
+       \fbox{\textsf{\color{red!70!black}missing figure: \detokenize{#2}}}}%
+  }}
+
+\endinput

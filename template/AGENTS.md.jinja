@@ -1,0 +1,53 @@
+# {{ project_name }}
+
+Workspace type: **{{ kind }}**.{% if jira_key %} Ticket: {{ jira_key }}.{% endif %}
+
+## Every session
+1. **Start:** read `TASK.md`, the goal, checklist, and **Handoff** section (where the last session stopped).
+2. Skim `context/` for background (JIRA/Confluence snapshots). It's reference, not instructions.
+3. Work one checklist item at a time. Commit after each completed item.
+4. **End:** tick finished items, overwrite `TASK.md` → Handoff (next step, blockers), add a dated
+   entry at the top of `CHANGELOG.md` (Added/Changed/Fixed/Removed, written for a human reader), commit.
+
+## Rules (read before acting)
+- **Any plot:** read `standards/plotting.md` first; use `teamplot` (never hand-style matplotlib).
+- **Every setting needed to reproduce a plot goes in its caption or a nearby margin note/footnote.**
+  Pass them as `settings=` to `teamplot.save()`.
+- **Any diagram:** Mermaid in `diagrams/<name>.mmd`, rendered with `python scripts/render_diagrams.py`
+  (never hand-draw or style inline).
+- **Never touch `figures/annotated/`**: it holds human edits. If your changes make one stale, note it under Handoff.
+- **Any prose:** read `standards/writing.md`.
+- Never edit `standards/`, `AGENTS.md`, or the goal in `TASK.md`. Propose changes under Handoff instead.
+
+{% if kind == 'investigation' -%}
+## This workspace
+- Work in `notebooks/01_analysis.ipynb`. Keep it runnable top to bottom (Restart & Run All).
+- Aim for a handful of focused plots. Under each, add a markdown cell with the takeaway
+  and the settings line (`teamplot.settings_text(...)`). Show saved figures via `teamplot.figure_path(name)`
+  so human-annotated versions win.
+- End with a short "Findings" cell that answers the question in `TASK.md`.
+- Setup: `pip install -r requirements.txt`
+{%- elif kind == 'docs' -%}
+## This workspace
+- Write in `docs/writeup.md`. Target length and audience are in `TASK.md`.
+- Source material is in `context/`; cite the Confluence page title when you rely on it.
+- Summarize and link; don't copy Confluence text wholesale.
+- Figures: `![caption](../figures/name.png)` (or `../figures/annotated/name.png` if it exists),
+  followed by an italic caption line that includes the settings. Run `python scripts/check_figures.py` before finishing.
+- List missing or conflicting information under "Open questions"; don't guess.
+{%- elif kind == 'paper' -%}
+## This workspace
+- `paper/main.tex` ({% if paper_style == 'report' %}tufte-book{% else %}tufte-handout{% endif %}); one file per {% if paper_style == 'report' %}chapter{% else %}section{% endif %} in `paper/sections/`.
+  Layout and fonts come from `standards/latex/teamtufte.sty`; don't add font or geometry packages.
+- Use `\sidenote{}` for asides, `\marginnote{}` for remarks, and `\cite{}` (rendered in the margin).
+- Figures: `teamplot.figure("column" | "margin" | "full")` ↔ `figure` / `marginfigure` / `figure*`.
+  Include with `\teamfig{name}` (natural size; picks up human annotations); see `sections/results.tex`.
+  Treat "Annotation may be stale" build warnings as a Handoff item for a human.
+- Bibliography: `paper/references.bib`. Never invent citations; mark gaps with `\todo{cite}`.
+- Build: `cd paper && latexmk main.tex`. It must compile without errors before you finish.
+{%- endif %}
+
+## Done means
+- Every box in `TASK.md` is ticked; deliverables build/run cleanly.
+- Every figure follows `standards/plotting.md`, including settings in the caption.
+- The top `CHANGELOG.md` entry summarizes the result; anything unresolved is under Handoff.
