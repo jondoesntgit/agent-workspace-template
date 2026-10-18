@@ -63,13 +63,19 @@ Copier updates projects to **git tags**, so every release is a tag.
 1. In `CHANGELOG.md`, rename `## [Unreleased]` to `## [1.2.0] - YYYY-MM-DD`, add a fresh
    empty `## [Unreleased]`, and update the compare links at the bottom.
 2. Update `release` in `docs-site/conf.py`.
-3. Commit, tag, push:
+3. Commit and push to `main`:
 
    ```bash
    git commit -am "Release 1.2.0"
-   git tag v1.2.0
-   git push && git push --tags
+   git push
    ```
+
+   You don't tag by hand. The `release` workflow (`.github/workflows/release.yml`) runs
+   when `CHANGELOG.md` changes on `main`. For each `## [X.Y.Z] - YYYY-MM-DD` heading
+   without a tag, it tags `vX.Y.Z` on the commit that added the heading and publishes a
+   GitHub release with that changelog section as its notes. It also warns if
+   `docs-site/conf.py` names a different version. To re-run it, use **Run workflow**
+   on the workflow's Actions page; existing tags and releases are left alone.
 
 Version numbers:
 

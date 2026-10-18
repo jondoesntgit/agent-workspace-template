@@ -1,0 +1,81 @@
+name: release
+
+# Tags releases from CHANGELOG.md, so a release needs only a commit on main.
+#
+# Every "## [X.Y.Z] - YYYY-MM-DD" heading in CHANGELOG.md is a release. If tag vX.Y.Z
+# doesn't exist yet, it is created on the commit that first added that heading, and a
+# GitHub release is published with that section of the changelog as its notes.
+# Re-running is safe: existing tags and releases are left alone.
+
+on:
+  push:
+    branches: [main]
+    paths: [CHANGELOG.md]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history, to find the commit that added each heading
+          fetch-tags: true
+
+      - name: Create missing tags and releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          versions=$(grep -oP '^## \[\K[0-9]+\.[0-9]+\.[0-9]+(?=\] - [0-9]{4}-[0-9]{2}-[0-9]{2})' CHANGELOG.md || true)
+          if [ -z "$versions" ]; then
+            echo "No released versions in CHANGELOG.md."
+            exit 0
+          fi
+
+          # Oldest first, so releases are published in order.
+          for v in $(printf '%s\n' "$versions" | sort -V); do
+            tag="v$v"
+            if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+              echo "$tag already exists."
+            else
+              commit=$(git log --reverse --format=%H -S"## [$v]" -- CHANGELOG.md | head -n1)
+              if [ -z "$commit" ]; then
+                echo "::error::Could not find the commit that added ## [$v] to CHANGELOG.md"
+                exit 1
+              fi
+              git tag -a "$tag" "$commit" -m "Release $v"
+              git push origin "refs/tags/$tag"
+              echo "Tagged $tag at $commit."
+            fi
+
+            if gh release view "$tag" >/dev/null 2>&1; then
+              echo "Release $tag already exists."
+            else
+              # Notes: the changelog section for this version, without its heading.
+              awk -v v="$v" '
+                $0 ~ "^## \\[" { if (found) exit; if (index($0, "## [" v "]") == 1) { found = 1; next } }
+                found
+              ' CHANGELOG.md > notes.md
+              gh release create "$tag" --verify-tag --title "$v" --notes-file notes.md
+              echo "Published release $tag."
+            fi
+          done
+
+      - name: Check docs version
+        run: |
+          latest=$(grep -oP '^## \[\K[0-9]+\.[0-9]+\.[0-9]+(?=\] - )' CHANGELOG.md | sort -V | tail -n1)
+          docs=$(grep -oP '^release = "\K[^"]+' docs-site/conf.py)
+          if [ -n "$latest" ] && [ "$latest" != "$docs" ]; then
+            echo "::warning file=docs-site/conf.py::release is $docs but CHANGELOG.md's latest version is $latest"
+          fi

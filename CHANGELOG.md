@@ -12,6 +12,9 @@ Each release is a git tag (`v1.0.0`), which is what `copier update` pulls.
 - **PATCH**: fixes and wording
 
 ## [Unreleased]
+### Added
+- Release workflow: each dated version heading in `CHANGELOG.md` is tagged and
+  published as a GitHub release automatically, so releases need no manual `git tag`.
 
 ## [1.1.0] - 2026-10-18
 ### Changed

@@ -52,8 +52,9 @@ notebooks/ | docs/ | paper/
 
 ## Maintaining
 
-Edit `template/`, log the change in [`CHANGELOG.md`](CHANGELOG.md), tag a release
-(`git tag v1.1.0 && git push --tags`), then run `copier update --trust` in each project.
+Edit `template/`, log the change in [`CHANGELOG.md`](CHANGELOG.md), and push a release
+commit to `main`; the release workflow tags it from the changelog. Then run
+`copier update --trust` in each project.
 See the [maintenance docs](https://jondoesntgit.github.io/agent-workspace-template/maintenance.html).
 
 ## Repo layout
